@@ -1,10 +1,23 @@
 package server
 
 import (
-	"math/rand"
-
-	"github.com/classAndrew/ApertureServer/pkg/data"
+	"math/big"
 )
+
+// UserData contains User's information
+type UserData struct {
+	Name            string     `json:"name"`
+	NetOre          int        `json:"ore"`
+	NetMetal        int        `json:"metal"`
+	NetFood         int        `json:"food"`
+	NetWattage      float64    `json:"wattage"`
+	NetOil          float64    `json:"oil"`
+	NetPopulation   int        `json:"population"`
+	NetBodies       int        `json:"numberBodies"`
+	CelestialBodies []string   `json:"bodies"`
+	Balance         string     `json:"balance"`
+	Balance128      *big.Float `json:"-"`
+}
 
 // PlayerManager struct of default values to give to newly created players
 type PlayerManager struct {
@@ -19,14 +32,10 @@ type PlayerManager struct {
 var PM PlayerManager = PlayerManager{100, 100, 100, 1, 100}
 
 // CreateUser creates a user with default starting resources
-func (pm *PlayerManager) CreateUser(name string) *data.UserData {
-	planets := make([][]int, 0)
-	for i := 0; i < PM.DefaultPlanets; i++ {
-		coordinates := []int{rand.Intn(MAXSIZE), rand.Intn(MAXSIZE)}
-		planets = append(planets, coordinates)
-	}
-
-	user := &data.UserData{
+func (pm *PlayerManager) CreateUser(name string, starname string) *UserData {
+	planets := make([]string, 1)
+	planets[0] = starname
+	user := &UserData{
 		name,
 		PM.DefaultOre,
 		PM.DefaultMetal,

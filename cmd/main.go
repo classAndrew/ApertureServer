@@ -18,8 +18,12 @@ func main() {
 	}
 
 	register := func(w *http.ResponseWriter, req *http.Request, name string) {
-		user := server.PM.CreateUser(name)
-		res := data.DataMngr.RegisterUser(user)
+		starsys := server.GenerateStarSystem()
+		user := server.PM.CreateUser(name, starsys.Name)
+		res, status := data.DataMngr.RegisterUser(user)
+		if status {
+			data.DataMngr.RegisterStarSystem(&starsys)
+		}
 		io.WriteString(*w, res+"\n")
 	}
 

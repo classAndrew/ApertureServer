@@ -1,5 +1,9 @@
 package server
 
+import (
+	"math/rand"
+)
+
 // Position of a celestial body
 type Position struct {
 	X     int
@@ -13,4 +17,10 @@ type Body interface {
 	GetType() string
 	GetName() string
 	GetPos() Position
+}
+
+// GeneratePos by default will set index to 0
+func GeneratePos() Position {
+	posX, posY := rand.Intn(MAXSIZE), rand.Intn(MAXSIZE)
+	return Position{posX, posY, 0}
 }
