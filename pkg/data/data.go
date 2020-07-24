@@ -38,7 +38,7 @@ func (dm *DataManager) RegisterUser(user *server.UserData) (string, bool) {
 func (dm *DataManager) RegisterStarSystem(starsys *server.StarSystem) string {
 	sys := dm.monHandle.GetStarSystemMon(starsys.Name)
 	if sys.Name != "" {
-		return "Star System already generated (This is an error, report it) already taken"
+		return dm.RegisterStarSystem(starsys) // This is probably not the best way to handle duplicate starsystems
 	}
 	dm.monHandle.InsertStarSystemMon(starsys)
 	return "Success"

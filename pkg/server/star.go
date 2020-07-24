@@ -22,7 +22,7 @@ type Star struct {
 	luminosity  float64
 }
 
-const starNameLen int = 3
+const starNameLen int = 8
 const minMass float64 = 200   // 200 metic kilotons
 const maxMass float64 = 10000 // Pretty large stars out there
 const maxPlanets int = 10     // min of 1 planet
