@@ -102,6 +102,30 @@ func (m *MongoHandler) InsertPlanetMon(planet *server.Planet) {
 }
 
 // GetRandomPlanetNovelMon Will retrieve a random planet from the database
-func (m *MongoHandler) GetRandomPlanetNovelMon() {
+func (m *MongoHandler) GetRandomPlanetNovelMon() *server.Planet {
+	result := server.Planet{0, "", "", "", server.GeneratePos()}
+	matchStage := bson.D{{"$match", bson.D{{"Owner", ""}}}}
+	sampleStage := bson.D{{"$sample", bson.D{{"size", "1"}}}}
+	cursor, err := m.planetCollection.Aggregate(context.TODO(), mongo.Pipeline{matchStage, sampleStage})
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	cursor.Next(context.TODO())
+	cursor.Decode(&result)
+	return &result
+}
 
+// SetRandomPlanetNovelMon Will set a random new planet's attribute (strings only... Go doesn't have generics sadly)
+func (m *MongoHandler) SetRandomPlanetNovelMon(attrib string, value string) string {
+	result := server.Planet{0, "", "", "", server.GeneratePos()}
+	matchStage := bson.D{{"$match", bson.D{{"Owner", ""}}}}
+	sampleStage := bson.D{{"$sample", bson.D{{"size", 1}}}}
+	setStage := bson.D{{"$addFields", bson.D{{attrib, value}}}}
+	cursor, err := m.planetCollection.Aggregate(context.TODO(), mongo.Pipeline{matchStage, sampleStage, setStage})
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	cursor.Next(context.TODO())
+	cursor.Decode(&result)
+	return result.Name
 }

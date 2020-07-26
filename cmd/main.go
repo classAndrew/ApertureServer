@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/classAndrew/ApertureServer/pkg/server"
 
@@ -12,25 +14,31 @@ import (
 )
 
 func main() {
-
+	rand.Seed(int64(time.Now().Nanosecond()))
 	user := func(w *http.ResponseWriter, req *http.Request, user string) {
 		io.WriteString(*w, data.UserDataToJSON(data.DataMngr.GetUser(user))+"\n")
 	}
 
 	register := func(w *http.ResponseWriter, req *http.Request, name string) {
-		starsys := data.DataMngr.RandomStarSystem() // Get random star system instead
-		user := server.PM.CreateUser(name, starsys.Name)
+		// randPlanet := data.DataMngr.RandomStarSystem() // Get random star system instead
+		sys := server.GenerateStarSystem()
+		data.DataMngr.RegisterStarSystem(&sys)
+		user := server.PM.CreateUser(name)
+		homeName := data.DataMngr.SetRandomPlanetAttribute("Owner", user.Name)
+		user.HomePlanet = homeName
+		user.CelestialBodies = []string{homeName}
 		res, status := data.DataMngr.RegisterUser(user)
 		if status {
-			data.DataMngr.RegisterStarSystem(starsys)
+			io.WriteString(*w, res+"\n")
+			return
 		}
-		io.WriteString(*w, res+"\n")
+		io.WriteString(*w, "Username Already Registered / Something went wrong\n")
 	}
 
 	system := func(w *http.ResponseWriter, req *http.Request, name string) {
-		// io.WriteString(*w, data.StarSystemToJSON(data.DataMngr.GetStarSystem(name))+"\n")
-		//sys := data.DataMngr.RandomNovelSystem()
-		//io.WriteString(*w, data.StarSystemToJSON(sys)+"\n")
+		io.WriteString(*w, data.StarSystemToJSON(data.DataMngr.GetStarSystem(name))+"\n")
+		sys := data.DataMngr.GetStarSystem(name)
+		io.WriteString(*w, data.StarSystemToJSON(sys)+"\n")
 	}
 
 	root := func(w http.ResponseWriter, req *http.Request) {

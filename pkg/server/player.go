@@ -15,7 +15,7 @@ type UserData struct {
 	NetPopulation   int        `json:"population"`
 	NetBodies       int        `json:"numberBodies"`
 	HomePlanet      string     // The name of the homeplanet
-	CelestialBodies []string   `json:"bodies"`
+	CelestialBodies []string   `json:"-"`
 	Balance         string     `json:"balance"`
 	Balance128      *big.Float `json:"-"`
 }
@@ -33,9 +33,8 @@ type PlayerManager struct {
 var PM PlayerManager = PlayerManager{100, 100, 100, 1, 100}
 
 // CreateUser creates a user with default starting resources
-func (pm *PlayerManager) CreateUser(name string, homeName string) *UserData {
-	planets := make([]string, 1)
-	planets[0] = homeName
+func (pm *PlayerManager) CreateUser(name string) *UserData {
+	planets := make([]string, 0)
 	user := &UserData{
 		name,
 		PM.DefaultOre,
@@ -45,7 +44,7 @@ func (pm *PlayerManager) CreateUser(name string, homeName string) *UserData {
 		PM.DefaultOil,
 		100,
 		PM.DefaultPlanets,
-		homeName,
+		"",
 		planets,
 		"",
 		nil}
