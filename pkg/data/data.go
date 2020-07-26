@@ -21,7 +21,7 @@ var DataMngr DataManager = DataManager{128, 10, big.ToZero, monHand}
 
 // NewUserData creates a new UserData struct with empty values
 func NewUserData() server.UserData {
-	return server.UserData{"", 0, 0, 0, 0, 0, 0, 0, []string{}, "", nil}
+	return server.UserData{"", 0, 0, 0, 0, 0, 0, 0, "", []string{}, "", nil}
 }
 
 // RegisterUser method that adds a newly created User
@@ -38,10 +38,31 @@ func (dm *DataManager) RegisterUser(user *server.UserData) (string, bool) {
 func (dm *DataManager) RegisterStarSystem(starsys *server.StarSystem) string {
 	sys := dm.monHandle.GetStarSystemMon(starsys.Name)
 	if sys.Name != "" {
+		// FIX, move recursive outside to caller
 		return dm.RegisterStarSystem(starsys) // This is probably not the best way to handle duplicate starsystems
 	}
 	dm.monHandle.InsertStarSystemMon(starsys)
+	for _, planet := range starsys.Planets {
+		dm.monHandle.InsertPlanetMon(&planet)
+	}
 	return "Success"
+}
+
+// GetStarSystem will get the star system
+func (dm *DataManager) GetStarSystem(name string) *server.StarSystem {
+	sysDat := dm.monHandle.GetStarSystemMon(name)
+	return sysDat
+}
+
+// RandomNovelPlanet returns a novel planet that's unexplored / uncolonized
+func (dm *DataManager) RandomNovelPlanet() *server.Planet {
+	return nil
+}
+
+// RandomStarSystem will get a random star system that's unexplored (DOESN'T WORK YET)
+func (dm *DataManager) RandomStarSystem() *server.StarSystem {
+	sysDat := dm.monHandle.GetRandomStarSystem()
+	return sysDat
 }
 
 // GetUser will get the user with necessary precision applied

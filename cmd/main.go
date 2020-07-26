@@ -18,13 +18,19 @@ func main() {
 	}
 
 	register := func(w *http.ResponseWriter, req *http.Request, name string) {
-		starsys := server.GenerateStarSystem()
+		starsys := data.DataMngr.RandomStarSystem() // Get random star system instead
 		user := server.PM.CreateUser(name, starsys.Name)
 		res, status := data.DataMngr.RegisterUser(user)
 		if status {
-			data.DataMngr.RegisterStarSystem(&starsys)
+			data.DataMngr.RegisterStarSystem(starsys)
 		}
 		io.WriteString(*w, res+"\n")
+	}
+
+	system := func(w *http.ResponseWriter, req *http.Request, name string) {
+		// io.WriteString(*w, data.StarSystemToJSON(data.DataMngr.GetStarSystem(name))+"\n")
+		//sys := data.DataMngr.RandomNovelSystem()
+		//io.WriteString(*w, data.StarSystemToJSON(sys)+"\n")
 	}
 
 	root := func(w http.ResponseWriter, req *http.Request) {
@@ -39,6 +45,11 @@ func main() {
 			case "register":
 				if len(split) == 3 {
 					register(&w, req, split[2])
+				}
+				break
+			case "system":
+				if len(split) == 3 {
+					system(&w, req, split[2])
 				}
 				break
 			default:

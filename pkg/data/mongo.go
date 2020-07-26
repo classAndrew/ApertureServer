@@ -19,6 +19,7 @@ type MongoHandler struct {
 	client            *mongo.Client
 	userCollection    *mongo.Collection
 	starsysCollection *mongo.Collection
+	planetCollection  *mongo.Collection
 	// opts   *options.ClientOptions
 }
 
@@ -30,10 +31,11 @@ func NewMongoHandler(ip string, port string) *MongoHandler {
 	client, err := mongo.Connect(ctx, opts)
 	userCollection := client.Database("ApertureDB").Collection("players")
 	starsysCollection := client.Database("ApertureDB").Collection("starsystems")
+	planetCollection := client.Database("ApertureDB").Collection("planets")
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	return &MongoHandler{client, userCollection, starsysCollection}
+	return &MongoHandler{client, userCollection, starsysCollection, planetCollection}
 }
 
 // GetUserMon Returns all of a user's data
@@ -67,11 +69,39 @@ func (m *MongoHandler) InsertStarSystemMon(starsys *server.StarSystem) {
 // GetStarSystemMon Returns all of a user's data
 func (m *MongoHandler) GetStarSystemMon(name string) *server.StarSystem {
 	result := server.NewStarSystem()
-	filter := bson.M{"name": name}
-	err := m.userCollection.FindOne(context.TODO(), filter).Decode(&result)
+	filter := bson.M{"Name": name}
+	err := m.starsysCollection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
 		fmt.Println(err.Error())
 		// This will return an empty UserData struct. Check for found by looking for "" name
 	}
 	return result
+}
+
+// GetRandomStarSystem Returns all of a user's data
+func (m *MongoHandler) GetRandomStarSystem() *server.StarSystem {
+	result := server.NewStarSystem()
+	sampleStage := bson.D{{"$sample", bson.D{{"size", 1}}}}
+	cursor, err := m.starsysCollection.Aggregate(context.TODO(), mongo.Pipeline{sampleStage})
+	// err := m.starsysCollection.FindOne(context.TODO(), filter).Decode(&result)
+	if err != nil {
+		fmt.Println(err.Error())
+		// This will return an empty UserData struct. Check for found by looking for "" name
+	}
+	cursor.Next(context.TODO())
+	cursor.Decode(&result)
+	return result
+}
+
+// InsertPlanetMon Inserts a newly created planet into the planet collection
+func (m *MongoHandler) InsertPlanetMon(planet *server.Planet) {
+	var inface bson.M
+	temp, _ := json.Marshal(*planet)
+	json.Unmarshal(temp, &inface)
+	m.planetCollection.InsertOne(context.TODO(), inface)
+}
+
+// GetRandomPlanetNovelMon Will retrieve a random planet from the database
+func (m *MongoHandler) GetRandomPlanetNovelMon() {
+
 }

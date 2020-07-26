@@ -6,10 +6,11 @@ import (
 
 // StarSystem The star system holds data of planets and the star(s) (perhaps I could add binary, ternary, quaternary stars and moons as well)
 type StarSystem struct {
-	Name    string
-	Pos     Position
-	Star    Star
-	Planets []Planet
+	Name        string
+	Pos         Position
+	Star        Star
+	Planets     []Planet `json:"-"`
+	PlanetNames []string
 }
 
 // Star star struct
@@ -17,9 +18,9 @@ type Star struct {
 	Name        string
 	pos         Position
 	typeStar    string
-	mass        float64
+	Mass        float64
 	planetCount int
-	luminosity  float64
+	Luminosity  float64
 }
 
 const starNameLen int = 8
@@ -35,11 +36,13 @@ func NewStarSystem() *StarSystem {
 // GenerateStarSystem generates a star system
 func GenerateStarSystem() StarSystem {
 	star := GenerateStar()
+	planNames := []string{}
 	planets := make([]Planet, star.planetCount)
-	for i := 1; i < star.planetCount+1; i++ {
-		planets[i] = GeneratePlanet(star, i)
+	for i := 0; i < star.planetCount; i++ {
+		planets[i] = GeneratePlanet(star, i+1, "")
+		planNames = append(planNames, planets[i].Name)
 	}
-	return StarSystem{star.Name, star.pos, star, planets}
+	return StarSystem{star.Name, star.pos, star, planets, planNames}
 }
 
 // GenerateStar generates a star and returns its pointer
