@@ -26,7 +26,7 @@ func main() {
 		user := server.PM.CreateUser(name)
 		homeName := data.DataMngr.SetRandomPlanetAttribute("Owner", user.Name)
 		user.HomePlanet = homeName
-		user.CelestialBodies = []string{homeName}
+		user.CelestialBodies = append(user.CelestialBodies, homeName)
 		res, status := data.DataMngr.RegisterUser(user)
 		if status {
 			io.WriteString(*w, res+"\n")

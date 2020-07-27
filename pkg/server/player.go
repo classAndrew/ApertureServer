@@ -15,7 +15,7 @@ type UserData struct {
 	NetPopulation   int        `json:"population"`
 	NetBodies       int        `json:"numberBodies"`
 	HomePlanet      string     // The name of the homeplanet
-	CelestialBodies []string   `json:"-"`
+	CelestialBodies []string   // `json:"-"`
 	Balance         string     `json:"balance"`
 	Balance128      *big.Float `json:"-"`
 }
