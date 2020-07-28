@@ -6,14 +6,14 @@ import (
 
 // UserData contains User's information
 type UserData struct {
-	Name            string     `json:"name"`
-	NetOre          int        `json:"ore"`
-	NetMetal        int        `json:"metal"`
-	NetFood         int        `json:"food"`
-	NetWattage      float64    `json:"wattage"`
-	NetOil          float64    `json:"oil"`
-	NetPopulation   int        `json:"population"`
-	NetBodies       int        `json:"numberBodies"`
+	Name            string `json:"name"`
+	NetOre          int
+	NetMetal        int
+	NetFood         int
+	NetWattage      float64
+	NetOil          float64
+	NetPopulation   int
+	NetBodies       int
 	HomePlanet      string     // The name of the homeplanet
 	CelestialBodies []string   // `json:"-"`
 	Balance         string     `json:"balance"`
