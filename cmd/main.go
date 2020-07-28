@@ -37,8 +37,12 @@ func main() {
 
 	system := func(w *http.ResponseWriter, req *http.Request, name string) {
 		io.WriteString(*w, data.StarSystemToJSON(data.DataMngr.GetStarSystem(name))+"\n")
-		sys := data.DataMngr.GetStarSystem(name)
-		io.WriteString(*w, data.StarSystemToJSON(sys)+"\n")
+		// sys := data.DataMngr.GetStarSystem(name)
+		// io.WriteString(*w, data.StarSystemToJSON(sys)+"\n")
+	}
+
+	planet := func(w *http.ResponseWriter, req *http.Request, name string) {
+		io.WriteString(*w, data.PlanetToJSON(data.DataMngr.GetPlanet(name))+"\n")
 	}
 
 	root := func(w http.ResponseWriter, req *http.Request) {
@@ -58,6 +62,11 @@ func main() {
 			case "system":
 				if len(split) == 3 {
 					system(&w, req, split[2])
+				}
+				break
+			case "planet":
+				if len(split) == 3 {
+					planet(&w, req, split[2])
 				}
 				break
 			default:

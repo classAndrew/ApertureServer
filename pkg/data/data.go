@@ -59,14 +59,21 @@ func (dm *DataManager) RandomNovelPlanet() *server.Planet {
 	return nil
 }
 
-// SetPlanetAttribute sets planet's attribute
-func (dm *DataManager) SetPlanetAttribute() {
-	return
+// GetPlanet will get a planet by name
+func (dm *DataManager) GetPlanet(name string) *server.Planet {
+	return dm.monHandle.GetPlanetMon(name)
 }
 
-// SetRandomPlanetAttribute returns planet name, sets random planet's attribute (this really is only needed for setting initial home planet)
+// SetRandomPlanetAttribute returns planet name, sets random novel planet's attribute (this really is only needed for setting initial home planet)
 func (dm *DataManager) SetRandomPlanetAttribute(attrib string, value string) string {
-	return dm.monHandle.SetRandomPlanetNovelMon(attrib, value)
+	planetName := dm.monHandle.SetRandomPlanetNovelMon(attrib, value)
+	dm.monHandle.UpdatePlanetMon(planetName, attrib, value)
+	return planetName
+}
+
+// SetPlanetAttribute will set a planet attribute
+func (dm *DataManager) SetPlanetAttribute(name string, attrib string, value string) {
+	dm.monHandle.UpdatePlanetMon(name, attrib, value)
 }
 
 // RandomStarSystem will get a random star system that's unexplored (DOESN'T WORK YET)

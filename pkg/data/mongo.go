@@ -115,6 +115,24 @@ func (m *MongoHandler) GetRandomPlanetNovelMon() *server.Planet {
 	return &result
 }
 
+// GetPlanetMon Will retrieve a planet's data given its name
+func (m *MongoHandler) GetPlanetMon(name string) *server.Planet {
+	result := server.Planet{0, "", "", "", server.GeneratePos()}
+	matchStage := bson.D{{"$match", bson.D{{"Name", name}}}}
+	cursor, err := m.planetCollection.Aggregate(context.TODO(), mongo.Pipeline{matchStage})
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	cursor.Next(context.TODO())
+	cursor.Decode(&result)
+	return &result
+}
+
+// UpdatePlanetMon Will update a planet with given attributes (Strings only)
+func (m *MongoHandler) UpdatePlanetMon(name string, attrib string, value string) {
+	m.planetCollection.UpdateOne(context.TODO(), bson.D{{"Name", name}}, bson.D{{"$set", bson.D{{attrib, value}}}})
+}
+
 // SetRandomPlanetNovelMon Will set a random new planet's attribute (strings only... Go doesn't have generics sadly)
 func (m *MongoHandler) SetRandomPlanetNovelMon(attrib string, value string) string {
 	result := server.Planet{0, "", "", "", server.GeneratePos()}
