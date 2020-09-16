@@ -1,4 +1,5 @@
 # Aperture
+**Project is abandoned. School :/**
 (originally just a simple currency-resource managing server)
 Server code for an open-source 4X space exploration game.
 
